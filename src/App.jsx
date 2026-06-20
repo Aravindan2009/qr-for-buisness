@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useTransition } from 'react';
 import { 
   QRCodeCanvas, 
   QRCodeSVG 
@@ -152,6 +152,16 @@ function App() {
   const [logoMode, setLogoMode] = useState('auto'); // 'none', 'auto', 'custom'
   const [logoSrc, setLogoSrc] = useState('');
   const [logoSize, setLogoSize] = useState(18); // percentage size inside QR, e.g. 15%-25%
+  const [sliderSize, setSliderSize] = useState(18); // immediate state for the slider track
+  const [isPending, startTransition] = useTransition();
+
+  const handleSliderChange = (e) => {
+    const val = parseInt(e.target.value);
+    setSliderSize(val);
+    startTransition(() => {
+      setLogoSize(val);
+    });
+  };
 
   // Interaction feedback states
   const [copied, setCopied] = useState(false);
@@ -161,6 +171,40 @@ function App() {
   // Refs for download & print
   const canvasRef = useRef(null);
   const svgRef = useRef(null);
+
+  // Asynchronous high-res rendering triggers to prevent mobile drag lag
+  const [downloadTrigger, setDownloadTrigger] = useState(null); // 'png' or 'svg'
+  const downloadCanvasRef = useRef(null);
+  const downloadSvgRef = useRef(null);
+
+  // Effect to handle deferred 2000px high-res downloads
+  useEffect(() => {
+    if (downloadTrigger) {
+      const timer = setTimeout(() => {
+        try {
+          if (downloadTrigger === 'png') {
+            if (frameEnabled) {
+              downloadFramePNG(downloadCanvasRef.current);
+            } else {
+              downloadPlainPNG(downloadCanvasRef.current);
+            }
+          } else if (downloadTrigger === 'svg') {
+            if (frameEnabled) {
+              downloadFrameSVG(downloadSvgRef.current);
+            } else {
+              downloadPlainSVG(downloadSvgRef.current);
+            }
+          }
+        } catch (err) {
+          console.error(err);
+          setValidationError('Error rendering high-res QR for download.');
+        } finally {
+          setDownloadTrigger(null);
+        }
+      }, 150); // Small delay to let React commit and mount the hidden 2000px canvas
+      return () => clearTimeout(timer);
+    }
+  }, [downloadTrigger, frameEnabled]);
 
   // Parse Hex to RGB helper
   const hexToRgb = (hex) => {
@@ -259,20 +303,31 @@ function App() {
     return '';
   }, [logoMode, activeTab, logoSrc]);
 
-  // Center logo settings object resolved
-  const imageSettings = useMemo(() => {
+  // Center logo settings object resolved for 500px preview canvas
+  const previewImageSettings = useMemo(() => {
     const src = resolvedLogoSrc;
     if (!src) return undefined;
-
-    // Scale final size in canvas relative to canvas size setting
-    const finalSize = Math.floor(qrSize * (logoSize / 100));
+    const finalSize = Math.floor(500 * (logoSize / 100));
     return {
       src,
       height: finalSize,
       width: finalSize,
       excavate: true,
     };
-  }, [resolvedLogoSrc, logoSize, qrSize]);
+  }, [resolvedLogoSrc, logoSize]);
+
+  // Center logo settings object resolved for 2000px download canvas
+  const downloadImageSettings = useMemo(() => {
+    const src = resolvedLogoSrc;
+    if (!src) return undefined;
+    const finalSize = Math.floor(2000 * (logoSize / 100));
+    return {
+      src,
+      height: finalSize,
+      width: finalSize,
+      excavate: true,
+    };
+  }, [resolvedLogoSrc, logoSize]);
 
   // Form validator before download or custom actions
   const validateForm = () => {
@@ -354,8 +409,8 @@ function App() {
   };
 
   // Download plain QR code PNG
-  const downloadPlainPNG = () => {
-    const canvas = canvasRef.current;
+  const downloadPlainPNG = (customCanvas) => {
+    const canvas = customCanvas || canvasRef.current;
     if (!canvas) return;
     try {
       const pngUrl = canvas.toDataURL('image/png');
@@ -372,8 +427,8 @@ function App() {
   };
 
   // Download entire flyer card as PNG
-  const downloadFramePNG = () => {
-    const qrCanvas = canvasRef.current;
+  const downloadFramePNG = (customCanvas) => {
+    const qrCanvas = customCanvas || canvasRef.current;
     if (!qrCanvas) return;
 
     // Use higher resolution canvas for output print quality (e.g. 1500x2000 px)
@@ -500,16 +555,20 @@ function App() {
   // Trigger correct download depending on layout mode
   const handleDownloadPNG = () => {
     if (!validateForm()) return;
-    if (frameEnabled) {
-      downloadFramePNG();
+    if (qrSize === 2000) {
+      setDownloadTrigger('png');
     } else {
-      downloadPlainPNG();
+      if (frameEnabled) {
+        downloadFramePNG();
+      } else {
+        downloadPlainPNG();
+      }
     }
   };
 
   // Dynamic SVG Serializer for frame flyer templates
-  const downloadFrameSVG = () => {
-    const qrSvgElement = svgRef.current;
+  const downloadFrameSVG = (customSvg) => {
+    const qrSvgElement = customSvg || svgRef.current;
     if (!qrSvgElement) return;
 
     // Standard high fidelity template size
@@ -606,8 +665,8 @@ function App() {
   };
 
   // Download plain QR SVG
-  const downloadPlainSVG = () => {
-    const svgElement = svgRef.current;
+  const downloadPlainSVG = (customSvg) => {
+    const svgElement = customSvg || svgRef.current;
     if (!svgElement) return;
     try {
       const serializer = new XMLSerializer();
@@ -632,10 +691,14 @@ function App() {
 
   const handleDownloadSVG = () => {
     if (!validateForm()) return;
-    if (frameEnabled) {
-      downloadFrameSVG();
+    if (qrSize === 2000) {
+      setDownloadTrigger('svg');
     } else {
-      downloadPlainSVG();
+      if (frameEnabled) {
+        downloadFrameSVG();
+      } else {
+        downloadPlainSVG();
+      }
     }
   };
 
@@ -1293,15 +1356,15 @@ function App() {
                   <div className="space-y-2 pt-1">
                     <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400">
                       <span className="font-bold">Logo Scale Size:</span>
-                      <span className="font-extrabold text-neutral-800 dark:text-neutral-200">{logoSize}%</span>
+                      <span className="font-extrabold text-neutral-800 dark:text-neutral-200">{sliderSize}%</span>
                     </div>
                     <input
                       type="range"
                       min="10"
                       max="25"
-                      value={logoSize}
-                      onChange={(e) => setLogoSize(parseInt(e.target.value))}
-                      className="w-full h-1 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-neutral-950 dark:accent-white"
+                      value={sliderSize}
+                      onChange={handleSliderChange}
+                      className="w-full h-2 bg-neutral-200 dark:bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-neutral-950 dark:accent-white touch-none"
                     />
                     <span className="text-[10px] text-neutral-400 dark:text-neutral-500 block leading-tight">
                       * Kept within 10% - 25% safe range to ensure the QR code patterns remain readable by all standard mobile scanners.
@@ -1334,22 +1397,24 @@ function App() {
               {/* Original simple QR preview box */}
               <div className="relative w-full max-w-[280px] aspect-square rounded-2xl bg-white p-6 shadow-md border border-neutral-200 dark:border-neutral-800 flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-[1.02]">
                 
-                {generating && (
+                {(generating || downloadTrigger) && (
                   <div className="absolute inset-0 bg-white/95 dark:bg-neutral-955/95 flex flex-col items-center justify-center space-y-3 z-10 transition-all">
                     <RefreshCw className="w-8 h-8 text-neutral-950 dark:text-white animate-spin" />
-                    <span className="text-xs font-bold text-neutral-500">Updating Pattern...</span>
+                    <span className="text-xs font-bold text-neutral-500">
+                      {downloadTrigger ? 'Generating Print Quality...' : 'Updating Pattern...'}
+                    </span>
                   </div>
                 )}
                 
                 <QRCodeCanvas
                   ref={canvasRef}
                   value={qrValue}
-                  size={qrSize}
+                  size={500}
                   fgColor={fgColor}
                   bgColor={bgColor}
                   level={ecc}
                   includeMargin={includeMargin}
-                  imageSettings={imageSettings}
+                  imageSettings={previewImageSettings}
                   className="w-full h-full max-w-[240px] max-h-[240px] object-contain transition-all"
                   style={{ width: '100%', height: '100%', maxWidth: '240px', maxHeight: '240px' }}
                 />
@@ -1358,14 +1423,40 @@ function App() {
                   <QRCodeSVG
                     ref={svgRef}
                     value={qrValue}
-                    size={qrSize}
+                    size={500}
                     fgColor={fgColor}
                     bgColor={bgColor}
                     level={ecc}
                     includeMargin={includeMargin}
-                    imageSettings={imageSettings}
+                    imageSettings={previewImageSettings}
                   />
                 </div>
+
+                {/* Asynchronous high-resolution canvases rendered only when download is processing to prevent mobile slider lag */}
+                {downloadTrigger && (
+                  <div style={{ display: 'none' }}>
+                    <QRCodeCanvas
+                      ref={downloadCanvasRef}
+                      value={qrValue}
+                      size={2000}
+                      fgColor={fgColor}
+                      bgColor={bgColor}
+                      level={ecc}
+                      includeMargin={includeMargin}
+                      imageSettings={downloadImageSettings}
+                    />
+                    <QRCodeSVG
+                      ref={downloadSvgRef}
+                      value={qrValue}
+                      size={2000}
+                      fgColor={fgColor}
+                      bgColor={bgColor}
+                      level={ecc}
+                      includeMargin={includeMargin}
+                      imageSettings={downloadImageSettings}
+                    />
+                  </div>
+                )}
 
               </div>
 

@@ -12,7 +12,6 @@
   body {
     @apply font-sans antialiased bg-neutral-50 text-neutral-900 transition-colors duration-300 dark:bg-neutral-950 dark:text-neutral-50 min-h-screen;
     background-image: radial-gradient(circle at 100% 100%, rgba(0, 0, 0, 0.02) 0px, transparent 40%);
-    background-attachment: fixed;
   }
 
   body.dark {
@@ -61,4 +60,74 @@
 .scrollbar-none {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+/* Custom range input styling for premium touch-responsiveness and smooth dragging on mobile */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Style the track */
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 9999px;
+  @apply bg-neutral-200 dark:bg-neutral-800;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 8px;
+  border-radius: 9999px;
+  @apply bg-neutral-200 dark:bg-neutral-800;
+}
+
+/* Style the Webkit thumb */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -6px; /* center thumb vertically on track */
+  height: 20px;
+  width: 20px;
+  border-radius: 9999px;
+  @apply bg-neutral-950 dark:bg-white;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s ease, background-color 0.1s ease;
+}
+
+.dark input[type="range"]::-webkit-slider-thumb {
+  border: 2px solid #171717;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.25);
+}
+
+/* Style the Firefox thumb */
+input[type="range"]::-moz-range-thumb {
+  border: 2px solid white;
+  height: 20px;
+  width: 20px;
+  border-radius: 9999px;
+  @apply bg-neutral-950 dark:bg-white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s ease, background-color 0.1s ease;
+}
+
+.dark input[type="range"]::-moz-range-thumb {
+  border: 2px solid #171717;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.15);
+}
+
+input[type="range"]::-moz-range-thumb:active {
+  transform: scale(1.25);
 }
