@@ -852,8 +852,8 @@ function App() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-neutral-200/40 dark:bg-neutral-800/10 rounded-full blur-[100px] pointer-events-none"></div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-white/80 dark:bg-neutral-950/80 border-b border-neutral-205 dark:border-neutral-900 transition-all duration-300">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-white/80 dark:bg-neutral-950/80 border-b border-neutral-200 dark:border-neutral-900 transition-all duration-300">
+        <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <img 
               src="/logo.png" 
@@ -878,21 +878,21 @@ function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-6xl w-full mx-auto px-4 py-6 sm:py-8 lg:py-12 flex-grow">
+      <main className="max-w-6xl w-full mx-auto px-4 pt-5 pb-8 sm:py-8 lg:py-12 flex-grow">
         {currentView === 'generator' && (
           <>
             {/* Hero Tagline */}
-        <div className="text-center mb-6 sm:mb-10 mx-auto">
-          <h1 className="text-3xl md:text-5xl font-black tracking-tight text-neutral-950 dark:text-white uppercase leading-tight md:whitespace-nowrap">
-            Create Custom <span className="gradient-text font-black">QR Flyers here</span>
+        <div className="text-center mb-5 sm:mb-8 mx-auto">
+          <h1 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tight text-neutral-950 dark:text-white uppercase leading-tight">
+            Create Custom <span className="gradient-text font-black">QR Flyers</span>
           </h1>
         </div>
 
         {/* Dynamic Panel Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start">
           
-          {/* Form and Controls Card (Col Span 7) */}
-          <div className="lg:col-span-7 glass-panel rounded-3xl p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 relative overflow-hidden transition-all duration-300">
+          {/* Form and Controls Card (Col Span 7) — order-2 pushes it below preview on mobile */}
+          <div className="lg:col-span-7 order-2 lg:order-1 glass-panel rounded-3xl p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-8 relative overflow-hidden transition-all duration-300">
             
             {/* Step 1: Choose Template */}
             <div className="space-y-3">
@@ -1191,19 +1191,19 @@ function App() {
               </div>
 
               {/* Action buttons inside form */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              <div className="grid grid-cols-2 gap-3 pt-2">
                 <button 
                   type="submit"
                   disabled={generating}
-                  className="gradient-btn py-3 px-6 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 flex-grow sm:flex-none transition-all active:scale-[0.98]"
+                  className="gradient-btn py-3 px-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                 >
-                  <RefreshCw className={`w-4 h-4 ${generating ? 'animate-spin' : ''}`} />
-                  <span>{generating ? 'Generating Live...' : 'Re-Generate QR'}</span>
+                  <RefreshCw className={`w-4 h-4 flex-shrink-0 ${generating ? 'animate-spin' : ''}`} />
+                  <span className="truncate">{generating ? 'Generating...' : 'Generate QR'}</span>
                 </button>
                 <button 
                   type="button"
                   onClick={handleReset}
-                  className="bg-neutral-200/60 hover:bg-neutral-200 dark:bg-neutral-800/40 dark:hover:bg-neutral-800 py-3 px-5 rounded-2xl text-neutral-700 dark:text-neutral-300 font-bold text-sm flex-grow sm:flex-none transition-all active:scale-[0.98]"
+                  className="bg-neutral-200/60 hover:bg-neutral-200 dark:bg-neutral-800/40 dark:hover:bg-neutral-800 py-3 px-4 rounded-2xl text-neutral-700 dark:text-neutral-300 font-bold text-sm flex items-center justify-center transition-all active:scale-[0.98]"
                 >
                   Reset Fields
                 </button>
@@ -1229,23 +1229,23 @@ function App() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => setQrSize(500)}
-                      className={`flex-1 py-2.5 px-3 border rounded-xl text-xs font-bold tracking-tight transition-all ${
+                      className={`flex-1 py-2.5 px-2 border rounded-xl text-[11px] font-bold tracking-tight transition-all ${
                         qrSize === 500
                           ? 'border-neutral-950 dark:border-white bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 font-extrabold'
                           : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-650 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800/50'
                       }`}
                     >
-                      Digital Quality (500px)
+                      Digital (500px)
                     </button>
                     <button
                       onClick={() => setQrSize(2000)}
-                      className={`flex-1 py-2.5 px-3 border rounded-xl text-xs font-bold tracking-tight transition-all ${
+                      className={`flex-1 py-2.5 px-2 border rounded-xl text-[11px] font-bold tracking-tight transition-all ${
                         qrSize === 2000
                           ? 'border-neutral-950 dark:border-white bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 font-extrabold'
                           : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 text-neutral-650 dark:text-neutral-405 hover:bg-neutral-100 dark:hover:bg-neutral-800/50'
                       }`}
                     >
-                      Print Standee (2000px)
+                      Print (2000px)
                     </button>
                   </div>
                 </div>
@@ -1378,11 +1378,11 @@ function App() {
 
           </div>
 
-          {/* Sticky Preview Panel (Col Span 5) */}
-          <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6">
+          {/* Sticky Preview Panel (Col Span 5) — order-1 floats it above form on mobile */}
+          <div className="lg:col-span-5 order-1 lg:order-2 lg:sticky lg:top-24 space-y-4 sm:space-y-6">
             
             {/* Visual preview card */}
-            <div className="glass-panel rounded-3xl p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 flex flex-col items-center justify-between text-center relative overflow-hidden transition-all duration-300">
+            <div className="glass-panel rounded-3xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 flex flex-col items-center justify-between text-center relative overflow-hidden transition-all duration-300">
               
               <div className="w-full flex items-center justify-between pb-3 border-b border-neutral-200/50 dark:border-neutral-800/40">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-neutral-450 flex items-center gap-1.5">
@@ -1395,7 +1395,7 @@ function App() {
               </div>
 
               {/* Original simple QR preview box */}
-              <div className="relative w-full max-w-[280px] aspect-square rounded-2xl bg-white p-6 shadow-md border border-neutral-200 dark:border-neutral-800 flex items-center justify-center overflow-hidden transition-transform duration-300 hover:scale-[1.02]">
+              <div className="relative w-full max-w-[260px] sm:max-w-[280px] aspect-square rounded-2xl bg-white p-5 sm:p-6 shadow-md border border-neutral-200 dark:border-neutral-800 flex items-center justify-center overflow-hidden">
                 
                 {(generating || downloadTrigger) && (
                   <div className="absolute inset-0 bg-white/95 dark:bg-neutral-955/95 flex flex-col items-center justify-center space-y-3 z-10 transition-all">
@@ -1462,13 +1462,13 @@ function App() {
 
               {/* Live scanner advice helper */}
               <div className="space-y-1 w-full text-center">
-                <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 flex items-center justify-center gap-1">
-                  💡 Target: 
-                  <span className="font-extrabold text-neutral-800 dark:text-neutral-200 max-w-[190px] truncate block" title={qrValue}>
+                <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 flex flex-wrap items-center justify-center gap-1">
+                  💡
+                  <span className="font-extrabold text-neutral-800 dark:text-neutral-200 max-w-full truncate block text-[11px]" title={qrValue}>
                     {qrValue}
                   </span>
                 </p>
-                <p className="text-[10px] text-neutral-400">Aim your phone camera at the preview pattern to verify scannability.</p>
+                <p className="text-[10px] text-neutral-400">Scan the preview above to verify it works.</p>
               </div>
 
               <hr className="w-full border-neutral-200/50 dark:border-neutral-800/40" />
@@ -1620,7 +1620,7 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full border-t border-neutral-250 dark:border-neutral-850/80 bg-white/50 dark:bg-neutral-950/50 py-8 px-4 text-center mt-12">
+      <footer className="w-full border-t border-neutral-200 dark:border-neutral-800/80 bg-white/50 dark:bg-neutral-950/50 py-6 sm:py-8 px-4 text-center mt-8 sm:mt-12">
         <div className="max-w-6xl mx-auto space-y-4">
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-semibold text-neutral-400 dark:text-neutral-500">
             <span>✓ 100% Free & Unlimited Scans</span>
