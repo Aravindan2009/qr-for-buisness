@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Outfit', sans-serif;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-spin-slow: spin 8s linear infinite;
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased bg-neutral-50 text-neutral-900 transition-colors duration-300 dark:bg-neutral-950 dark:text-neutral-50 min-h-screen;
+    background-image: radial-gradient(circle at 100% 100%, rgba(0, 0, 0, 0.02) 0px, transparent 40%);
+    background-attachment: fixed;
+  }
+
+  body.dark {
+    background-image: radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.01) 0px, transparent 40%);
+  }
+}
+
+/* Grayscale/Monochrome custom classes */
+.glass-panel {
+  @apply bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-sm dark:shadow-none;
+}
+
+.glass-card {
+  @apply bg-neutral-100 dark:bg-neutral-900/60 border border-neutral-200 dark:border-neutral-800 shadow-sm;
+}
+
+.glass-input {
+  @apply bg-white dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-800 focus:border-neutral-900 dark:focus:border-neutral-100 focus:ring-2 focus:ring-neutral-900/10 dark:focus:ring-neutral-100/10 outline-none transition-all duration-200;
+}
+
+/* Custom interactive active elements */
+.gradient-text {
+  @apply font-black text-neutral-950 dark:text-white;
+}
+
+.gradient-btn {
+  @apply bg-neutral-950 hover:bg-neutral-900 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-neutral-950 shadow-sm transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-neutral-300 dark:bg-neutral-800 rounded-full hover:bg-neutral-400 dark:hover:bg-neutral-700;
+}
+
+/* Hide scrollbars but keep functionality */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
