@@ -62,6 +62,9 @@ const LOGO_PRESETS = {
 };
 
 function App() {
+  // Page view state ('generator', 'privacy', 'terms')
+  const [currentView, setCurrentView] = useState('generator');
+
   // Theme state (system default or stored)
   const [darkMode, setDarkMode] = useState(() => {
     try {
@@ -813,8 +816,9 @@ function App() {
 
       {/* Main Content Area */}
       <main className="max-w-6xl w-full mx-auto px-4 py-6 sm:py-8 lg:py-12 flex-grow">
-        
-        {/* Hero Tagline */}
+        {currentView === 'generator' && (
+          <>
+            {/* Hero Tagline */}
         <div className="text-center mb-6 sm:mb-10 mx-auto">
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-neutral-950 dark:text-white uppercase leading-tight md:whitespace-nowrap">
             Create Custom <span className="gradient-text font-black">QR Flyers here</span>
@@ -1427,10 +1431,100 @@ function App() {
                 <p className="leading-relaxed">Use <strong>Print Standee (2000px)</strong> to output ultra-sharp files. SVG format exports all shapes as vectors, which graphic designers can scale infinitely without pixelation.</p>
               </div>
             </div>
-
           </div>
 
         </div>
+        </>
+      )}
+
+      {currentView === 'privacy' && (
+        <div className="max-w-3xl mx-auto py-8 md:py-12 px-4 space-y-8 animate-fade-in">
+          <button 
+            onClick={() => { setCurrentView('generator'); window.scrollTo(0, 0); }}
+            className="flex items-center gap-2 text-sm font-bold text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-white transition-all"
+          >
+            &larr; Back to QR Generator
+          </button>
+          
+          <div className="glass-panel rounded-3xl p-6 md:p-10 space-y-6">
+            <h1 className="text-3xl font-black tracking-tight text-neutral-950 dark:text-white uppercase">Privacy Policy</h1>
+            <p className="text-xs text-neutral-450 uppercase font-bold tracking-wider">Last updated: June 2026</p>
+            
+            <div className="border-b border-neutral-250 dark:border-neutral-800 my-4"></div>
+            
+            <div className="space-y-6 text-sm text-neutral-650 dark:text-neutral-400 leading-relaxed">
+              <section className="space-y-2">
+                <h2 className="text-base font-bold text-neutral-850 dark:text-neutral-200 uppercase">1. Zero Data Collection</h2>
+                <p>
+                  We believe in complete privacy. <strong>QR for Business</strong> does not collect, log, track, or share any information you input. All parameters (URLs, names, messages, payment details, or coordinates) remain entirely private and local to your device.
+                </p>
+              </section>
+
+              <section className="space-y-2">
+                <h2 className="text-base font-bold text-neutral-850 dark:text-neutral-200 uppercase">2. Local Browser Execution</h2>
+                <p>
+                  The QR generation process runs 100% client-side. When you input details or upload a logo, the computations are handled by your browser using JavaScript. No files, assets, or values are uploaded to any server. Your custom business logo stays on your local machine.
+                </p>
+              </section>
+
+              <section className="space-y-2">
+                <h2 className="text-base font-bold text-neutral-850 dark:text-neutral-200 uppercase">3. Cookies & Tracking</h2>
+                <p>
+                  We do not use tracking cookies, analytics, or user fingerprinting. The dark mode preference is stored locally on your device using browser <code>localStorage</code> and never leaves your machine.
+                </p>
+              </section>
+
+              <section className="space-y-2">
+                <h2 className="text-base font-bold text-neutral-850 dark:text-neutral-200 uppercase">4. Security</h2>
+                <p>
+                  Since no data is collected, stored, or processed remotely, there is no remote server database that can be breached. Your generated payment codes and business details are as secure as your local browser environment.
+                </p>
+              </section>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {currentView === 'terms' && (
+        <div className="max-w-3xl mx-auto py-8 md:py-12 px-4 space-y-8 animate-fade-in">
+          <button 
+            onClick={() => { setCurrentView('generator'); window.scrollTo(0, 0); }}
+            className="flex items-center gap-2 text-sm font-bold text-neutral-600 dark:text-neutral-400 hover:text-neutral-950 dark:hover:text-white transition-all"
+          >
+            &larr; Back to QR Generator
+          </button>
+          
+          <div className="glass-panel rounded-3xl p-6 md:p-10 space-y-6">
+            <h1 className="text-3xl font-black tracking-tight text-neutral-950 dark:text-white uppercase">Terms of Service</h1>
+            <p className="text-xs text-neutral-450 uppercase font-bold tracking-wider">Last updated: June 2026</p>
+            
+            <div className="border-b border-neutral-250 dark:border-neutral-800 my-4"></div>
+            
+            <div className="space-y-6 text-sm text-neutral-655 dark:text-neutral-400 leading-relaxed">
+              <section className="space-y-2">
+                <h2 className="text-base font-bold text-neutral-850 dark:text-neutral-200 uppercase">1. Usage License</h2>
+                <p>
+                  You are granted a free, perpetual license to use the generated QR codes for personal and commercial business activities. You may print, distribute, and publish the custom standee flyer patterns without attribution or cost.
+                </p>
+              </section>
+
+              <section className="space-y-2">
+                <h2 className="text-base font-bold text-neutral-850 dark:text-neutral-200 uppercase">2. Input Verification Responsibilities</h2>
+                <p>
+                  You are solely responsible for verifying that your inputs are correct. For payments, always double check that the <strong>UPI ID</strong> matches your bank merchant account. We are not responsible for transactions sent to incorrect addresses due to user typos.
+                </p>
+              </section>
+
+              <section className="space-y-2">
+                <h2 className="text-base font-bold text-neutral-850 dark:text-neutral-200 uppercase">3. Disclaimer of Liability</h2>
+                <p>
+                  This service is provided "as is" and "as available" without warranties of any kind. We do not guarantee scannability of QR codes on all camera models, particularly if you design low-contrast configurations. Under no circumstances shall QR for Business be liable for any direct, indirect, or consequential losses arising from the use or inability to use this site.
+                </p>
+              </section>
+            </div>
+          </div>
+        </div>
+      )}
 
       </main>
 
@@ -1446,6 +1540,11 @@ function App() {
           <p className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest">
             Simple Business Tools
           </p>
+          <div className="flex justify-center gap-4 text-[11px] font-bold text-neutral-450 dark:text-neutral-500 py-1">
+            <button type="button" onClick={() => { setCurrentView('privacy'); window.scrollTo(0, 0); }} className="hover:underline hover:text-neutral-950 dark:hover:text-white transition-colors">Privacy Policy</button>
+            <span className="text-neutral-300 dark:text-neutral-850">•</span>
+            <button type="button" onClick={() => { setCurrentView('terms'); window.scrollTo(0, 0); }} className="hover:underline hover:text-neutral-950 dark:hover:text-white transition-colors">Terms & Conditions</button>
+          </div>
           <p className="text-xs text-neutral-400 dark:text-neutral-500 flex items-center justify-center gap-1.5 font-medium">
             Designed for local shops and merchants • Crafted with <Heart className="w-3.5 h-3.5 text-neutral-400 dark:text-neutral-500 fill-neutral-300 dark:fill-neutral-800" /> & React
           </p>
